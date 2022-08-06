@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const mongoose = require("mongoose");
-const mongoString = process.env.DATABASE_URL;
+const mongoString = process.env.MONGODB_URI;
 const routes = require("./routes/routes");
 
 mongoose.connect(mongoString);
