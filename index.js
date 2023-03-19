@@ -2,26 +2,29 @@ require("dotenv").config();
 
 const express = require("express");
 const mongoose = require("mongoose");
-const mongoString = process.env.MONGODB_URI;
 const routes = require("./routes/routes");
 
-mongoose.connect(mongoString);
-const database = mongoose.connection;
-
-database.on("error", (error) => {
-  console.log(error);
-});
-
-database.once("connected", () => {
-  console.log("Database Connected");
-});
-
 const app = express();
+const MONGO_URI = process.env.MONGODB_URI;
+const PORT = process.env.PORT || 5000;
+
+// Connect to MongoDB
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(MONGO_URI);
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.log(error);
+    process.exit(1);
+  }
+}
+
+//Connect to the database before listening
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log("listening for requests");
+  })
+})
 
 app.use(express.json());
-
-app.listen(5000, () => {
-  console.log(`Server Started at ${5000}`);
-});
-
 app.use("/api", routes);
